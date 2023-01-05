@@ -18,23 +18,20 @@ jobs:
     # Checkout the repository to the Github Actions runner
     - name: Checkout
       uses: actions/checkout@v2
-      
-    # Login AZ
-    - name: AZ login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
         
     # Install the latest version of Terraform CLI
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 0.14.x
-    - name: Configure Azure
-      run: |
-        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-        az account set --subscription $AZURE_SUBSCRIPTION_ID
-    - name: Plan
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN}}
+    
+    - name: Terraform Init
+      run: terraform init
+      
+    - name: Terraform Plan
       run: terraform plan
-    - name: Apply
+      
+    - name: Terraform Apply
+      if: github.ref == "refs/heads/main" && github.event_name == "push"
       run: terraform apply -auto-approve
