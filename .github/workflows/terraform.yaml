@@ -13,10 +13,6 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 0.14.x
-    - name: Configure Azure
-      run: |
-        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-        az account set --subscription $AZURE_SUBSCRIPTION_ID
     - name: Plan
       run: terraform plan
     - name: Apply
