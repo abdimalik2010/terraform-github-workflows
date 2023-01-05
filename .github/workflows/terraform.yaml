@@ -40,15 +40,14 @@ jobs:
           run: terraform apply -auto-approve -input=false
           
   # tfsec is a static analysis security scanner for your Terraform code
-
   tfsec:
       name: tfsec sarif report
       runs-on: ubuntu-latest
 
       steps:
-        - name: tfsec
-          uses: tfsec/tfsec-sarif-action@v0.0.3
-          with:
-            working_directory: terraform/relevant
-            sarif_file: tfsec.sarif         
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone repo
+        uses: actions/checkout@master
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: true
