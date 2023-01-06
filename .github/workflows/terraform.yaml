@@ -1,4 +1,4 @@
-name: 'Terraform deployment'
+name: 'CI-CD'
 on:
   push:
     branches:
