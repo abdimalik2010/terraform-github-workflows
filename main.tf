@@ -16,9 +16,11 @@ terraform {
 }
 
 provider "azurerm" {
+
   features {
     
   }
+
 }
 
 data "azurerm_resource_group" "exemple" {
