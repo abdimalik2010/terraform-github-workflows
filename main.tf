@@ -1,9 +1,17 @@
 terraform {
+    terraform {
+  backend "azurerm" {
+    storage_account_name = "tfstate9926"
+    container_name       = "tfstate"
+    key                  = "path/to/terraform.tfstate"
+  }
+}
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
       version = "3.37.0"
     }
+
   }
 }
 
