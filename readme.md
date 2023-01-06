@@ -1,44 +1,88 @@
-## To deploy a Terraform workflow on Azure using GitHub, you will need to follow these steps:
 
-### 1. Install the Azure CLI on your system if you do not already have it installed.
+### To get started with Terraform and authenticate with Azure:
 
-2. Sign in to Azure using the Azure CLI by running the following command:
+- [Get started with Terraform](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/infrastructure-as-code?in=terraform%2Fazure-get-started)
 
-Copy code
+- Install the Azure CLI: You will need to install the Azure CLI on your local machine in order to authenticate with Azure.[Install-azure-cli from here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+
+
+- Authenticate with Azure: Run the az login command and follow the prompts to authenticate with Azure.
+
+- Install Terraform: You will need to install Terraform on your local machine in order to manage your Azure infrastructure. [Install Terraform from here](https://developer.hashicorp.com/terraform/downloads)
+
+
+- Set up a Terraform configuration file: Create a Terraform configuration file and define your Azure infrastructure resources using the HashiCorp Configuration Language (HCL).
+
+- Initialize Terraform: Run the terraform init command to initialize Terraform and download any necessary plugins.
+
+- Create and apply your infrastructure: Use the terraform plan and terraform apply commands to create and apply your Azure infrastructure.
+
+- Manage and update your infrastructure: Use Terraform to manage and update your Azure infrastructure as needed.
+
+- [Terraform useful cli-commands](https://developer.hashicorp.com/terraform/cli/commands)
+
+
+---
+
+### To store your Terraform state file remotely, create an Azure Storage account
+
+Create resource group
 
 ```
-az login
+az group create --name <RESOURCE_GROUP_NAME> --location westeurope
 ```
-3. Create a resource group for your Terraform deployment by running the following command:
-
-Copy code
+Create storage account
 
 ```
-az group create --name myResourceGroup --location westus
+az storage account create --resource-group <RESOURCE_GROUP_NAME> --name <STORAGE_ACCOUNT_NAME> --sku Standard_LRS --encryption-services blob
 ```
-4. Create an Azure service principal by running the following command:
+Create blob container
 
-Copy code
 ```
-az ad sp create-for-rbac --name myServicePrincipal
+az storage container create --name <CONTAINER_NAME> --account-name <STORAGE_ACCOUNT_NAME>
 ```
-5. Save the output of the previous command, as you will need the appId, password, and tenant values later.
 
-6. Create a Terraform configuration file (e.g. main.tf) that describes the infrastructure you want to deploy on Azure.
+Configure Terraform to use the remote backend: In your Terraform configuration
 
-7. Create a GitHub repository and add your Terraform configuration file to it.
+---
 
-8. Create a new GitHub workflow by creating a file named .github/workflows/terraform.yml in your repository.
 
-9. Add the following YAML code to the terraform.yml file to configure the workflow:
+### To deploy a Terraform workflows on Azure using GitHub CI/CD workflows, you will need to follow these steps:
 
-10. In the repository settings, go to the "Secrets" section and create the following secrets:
+- [Create an Azure service principal with the Azure CLI](https://learn.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli)
 
-AZURE_CREDENTIALS: A JSON string containing the appId, password, and tenant values obtained in step 4.
-AZURE_CLIENT_ID: The appId value obtained in step 4.
-AZURE_CLIENT_SECRET: The password value obtained in step 4.
-AZURE_TENANT_ID: The tenant value obtained in step 4.
-AZURE_SUBSCRIPTION_ID: The ID of the Azure subscription that you want to    use for the deployment.
-11. Push your changes to the GitHub repository. The workflow will automatically run and deploy your Terraform configuration to Azure.
+Create an Azure service principal by running the following command:
 
-I hope this helps! Let me know if you have any questions.
+```
+  az ad sp create-for-rbac --name <sp-name> --role contributor \ 
+  --scopes /subscriptions/<specify the scope> \
+  --sdk-auth
+```
+
+-  Save the output of the previous command, as you will need the appId, password, and tenant values later.
+
+-  Create a Terraform configuration file (e.g. main.tf) that describes the infrastructure you want to deploy on Azure.
+
+- Create a GitHub repository and add your Terraform configuration file to it.
+
+- Create a new GitHub workflow by creating a file named .github/workflows/terraform.yml in your repository.
+
+- Add the following YAML code to the terraform.yml file to configure the workflow:
+
+- [Learn Github Actions](https://docs.github.com/en/actions/learn-github-actions)
+
+---
+
+### To add your Service Principal and Storage Access Token as secrets in GitHub Actions:
+
+- Go to the "Settings" tab in your GitHub repository.
+
+- Under the "Secrets" section, click the "Actions" tab.
+
+- Click the "New repository secret" button.
+
+- Enter a name for the secret (e.g. "AZURE_CREDENTIALS") and paste your Azure credentials in the "Value" field.
+
+- Click the "Add secret" button to save the secret.
+
+- You can now use these secrets in your GitHub Actions workflow by referencing the secret name (e.g. ${{ secrets.AZURE_CREDENTIALS }}).
