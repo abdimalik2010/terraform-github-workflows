@@ -38,6 +38,16 @@ jobs:
         - name: Terraform Apply
           if: github.ref == 'refs/heads/main' && github.event_name == 'push'
           run: terraform apply -auto-approve -input=false
+        - name: Create Azure Storage Account
+          uses: azure/terraform-create-storage-account@v1
+          with:
+            backend_type: azurerm
+            resource_group_name: my-resource-group
+            storage_account_name: mystorageaccount
+            container_name: mycontainer
+            access_key: ${{ secrets.ACCESS_KEY }}
+        - name: Configure Terraform Backend
+          run: terraform init -backend-config="storage_account_name=mystorageaccount" -backend-config="container_name=mycontainer" -backend-config="access_key=${ACCESS_KEY}"
           
   # tfsec is a static analysis security scanner for your Terraform code
   tfsec:
