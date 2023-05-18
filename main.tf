@@ -23,7 +23,7 @@ provider "azurerm" {
 }
 
 data "azurerm_resource_group" "exemple" {
-  name = "github-action-rg"
+  name = "test"
 
 }
 
