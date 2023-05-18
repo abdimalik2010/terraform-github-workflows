@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  ci:
+  CI:
     name: 'Continuous Integration'
     runs-on: ubuntu-latest
     env:
@@ -23,18 +23,14 @@ jobs:
         shell: bash
 
     steps:
-        # Checkout the repository to the GitHub Actions runner
         - name: Checkout
           uses: actions/checkout@v3
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
         - name: Setup Terraform
           uses: hashicorp/setup-terraform@v1
           with:
             cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
         - name: Terraform Init
           run: terraform init
-    # Generates an execution plan for Terraform
         - name: Terraform Plan
           run: terraform plan -input=false
 
@@ -51,28 +47,19 @@ jobs:
         with:
           soft_fail: true
 
-  cd:
+  CD:
     name: 'Continuous Deployment'
-    needs: [tfsec, ci]
+    needs: [tfsec, CI]
     runs-on: ubuntu-latest
-    if: ${{ needs.tfsec.result == 'success' && needs.ci.result == 'success' }}
+    if: ${{ needs.tfsec.result == 'success' }}
 
     steps:
-        # Checkout the repository to the GitHub Actions runner
         - name: Checkout
           uses: actions/checkout@v3
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v1
-          with:
-            cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
         - name: Terraform Init
           run: terraform init
-    # Generates an execution plan for Terraform
         - name: Terraform Plan
           run: terraform plan -input=false
-    # Apply Terraform changes
         - name: Terraform Apply
           if: github.ref == 'refs/heads/main' && github.event_name == 'push'
           run: terraform apply -auto-approve -input=false
