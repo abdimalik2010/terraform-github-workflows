@@ -75,7 +75,7 @@ Create an Azure service principal by running the following command:
 
 ### To add your Service Principal and Storage Access Token as secrets in GitHub Actions:
 
-- Go to the "Settings" tab in your GitHub repository.
+- Go to the "Settings" tab in your GitHub repository!
 
 - Under the "Secrets" section, click the "Actions" tab.
 
